@@ -153,7 +153,7 @@ void Raytracer::compute_image()
 
 
     // uncomment the following line to use multithreading
-    // #pragma omp parallel for
+    #pragma omp parallel for
     for (int x = 0; x < camera_.width_; ++x)
     {
         for (int y = 0; y < camera_.height_; ++y)
@@ -265,6 +265,34 @@ vec3 Raytracer::lighting(const vec3& point, const vec3& normal,
     * - Feel free to use the existing vector functions in `utils/vec3.h` e.g. mirror, reflect, norm, dot, normalize
     */
 
+    for (auto i = 0; i < 3; ++i)
+    {
+        color[i] = material.ambient[i] * ambience_[i];
+        for (auto light_source : lights_)
+        {
+            const vec3 xl = light_source.position - point;
+            Ray light_ray = Ray(point, xl);
+            bool shadow = false;
+            for (auto obj : objects_)
+            {
+                vec3 temp1;
+                vec3 temp2;
+                vec3 temp3;
+                double temp;
+                if (obj->intersect(light_ray, temp1, temp2, temp3, temp))
+                {
+                    shadow = true;
+                }
+            }
+            const vec3 v = normalize(view);
+            const vec3 r = normalize(mirror(xl, normal));
+            if (!shadow)
+            {
+                color[i] += light_source.color[i] * material.diffuse[i] * dot(normalize(xl), normal);
+                color[i] += light_source.color[i] * material.specular[i] * pow(dot(v, r), material.shininess);
+            }
+        }
+    }
 
     return color;
 }
