@@ -32,6 +32,14 @@ bool Plane::intersect(const Ray& ray, vec3& intersection_point,
  * - return whether there is an intersection for t>1e-5 (avoids "shadow acne").
 */
 
+    const double scalar = dot(normal_, ray.direction_);
+
+    if (scalar != 0) {
+        intersection_distance = (dot(normal_, center_) - dot(normal_, ray.origin_)) / scalar;
+        intersection_point = ray.origin_ + intersection_distance * ray.direction_;
+        intersection_normal = normal_;
+        return intersection_distance > 1e-5;
+    }
 
     return false;
 }

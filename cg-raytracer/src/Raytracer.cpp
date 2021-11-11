@@ -212,6 +212,13 @@ vec3 Raytracer::trace(const Ray& ray, int depth)
      * - check whether your recursive algorithm reflects the ray `max_depth_` times
      */
 
+    if (material.mirror > 0) {
+        vec3 direction = reflect(ray.direction_, normal);
+        Ray newRay = Ray(point, direction);
+        vec3 recColor = trace(newRay, ++depth);
+        color = color * (1 - material.mirror) + material.mirror * recColor;
+    }
+
 
     return color;
 }
@@ -273,17 +280,31 @@ vec3 Raytracer::lighting(const vec3& point, const vec3& normal,
             const vec3 xl = light_source.position - point;
             Ray light_ray = Ray(point, xl);
             bool shadow = false;
-            for (auto obj : objects_)
+
+            Material material_temp;
+            vec3 point_temp;
+            vec3 normal_temp;
+            double distance;
+            if (intersect_scene(light_ray, material_temp, point_temp, normal_temp, distance))
             {
-                vec3 temp1;
-                vec3 temp2;
-                vec3 temp3;
-                double temp;
-                if (obj->intersect(light_ray, temp1, temp2, temp3, temp))
-                {
+                if (norm(xl) > distance) {
                     shadow = true;
                 }
             }
+
+            //for (auto obj : objects_)
+            //{
+            //    vec3 temp1;
+            //    vec3 temp2;
+            //    vec3 temp3;
+            //    double temp;
+            //    //check for intersection and check if intersected point is not behind light source
+            //    if (obj->intersect(light_ray, temp1, temp2, temp3, temp) && norm(xl) > temp)
+            //    {
+            //        shadow = true;
+            //    }
+            //}
+
             const vec3 v = normalize(view);
             const vec3 r = normalize(mirror(xl, normal));
             if (!shadow)
