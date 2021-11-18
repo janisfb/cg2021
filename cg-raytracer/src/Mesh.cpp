@@ -331,7 +331,7 @@ void Mesh::compute_normals()
     }
 
     // NEU
-    // über alle Dreiecke gehen
+    // ï¿½ber alle Dreiecke gehen
     //  Dreieck hat drei Knoten
     //  An den Knoten jeweils den Winkel innerhalb des Dreiecks ausrechnen
     //  Normale der Knoten aktualisieren (aufsummieren nach Formel)
@@ -394,7 +394,49 @@ bool Mesh::intersect_bounding_box(const Ray& ray) const
     * with all triangles of every mesh in the scene. The bounding boxes are computed
     * in `Mesh::compute_bounding_box()`.
     */
+    double tmin = (bb_min_[0] - ray.origin_[0]) / ray.direction_[0];
+    double tmax = (bb_max_[0] - ray.origin_[0]) / ray.direction_[0];
 
+    if (tmin > tmax) {
+        const double temp = tmin;
+        tmin = tmax;
+        tmax = temp;
+    }
+
+    double tymin = (bb_min_[1] - ray.origin_[1]) / ray.direction_[1];
+    double tymax = (bb_max_[1] - ray.origin_[1]) / ray.direction_[1];
+
+    if (tymin > tymax)
+    {
+        const double temp = tymin;
+        tymin = tymax;
+        tymax = temp;
+    }
+
+    if((tmin > tymax) || (tymin > tmax)) {
+        return false;
+    }
+
+    if (tymin > tmin) 
+        tmin = tymin;
+
+    if (tymax < tmax)
+        tmax = tymax;
+
+    double tzmin = (bb_min_[2] - ray.origin_[2]) / ray.direction_[2];
+    double tzmax = (bb_max_[2] - ray.origin_[2]) / ray.direction_[2];
+
+    if (tzmin > tzmax)
+    {
+        const double temp = tzmin;
+        tzmin = tzmax;
+        tzmax = temp;
+    }
+
+    if ((tmin > tzmax) || (tzmin > tmax))
+    {
+        return false;
+    }
 
     return true;
 }
@@ -519,7 +561,7 @@ bool Mesh::intersect_triangle(const Triangle& triangle, const Ray& ray,
         const double v = alpha * v0_ + beta * v1_ + gamma * v2_;
 
         const int width = u * (texture_.width() - 1);
-        const int height = u * (texture_.height() - 1);
+        const int height = v * (texture_.height() - 1);
 
         intersection_diffuse = texture_(width, height);
     }
