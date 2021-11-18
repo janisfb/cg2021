@@ -349,9 +349,9 @@ void Mesh::compute_normals()
         const double angle_p1 = acos(dot(c, a));
         const double angle_p2 = acos(dot(a, b));
 
-        vertices_[t.i0].normal += normalize(angle_p0 * t.normal);
-        vertices_[t.i1].normal += normalize(angle_p1 * t.normal);
-        vertices_[t.i2].normal += normalize(angle_p2 * t.normal);
+        vertices_[t.i0].normal += normalize(angle_p1 * t.normal);
+        vertices_[t.i1].normal += normalize(angle_p2 * t.normal);
+        vertices_[t.i2].normal += normalize(angle_p0 * t.normal);
     }
 }
 
