@@ -330,6 +330,29 @@ void Mesh::compute_normals()
         t.normal = normalize(cross(p1 - p0, p2 - p0));
     }
 
+    // NEU
+    // über alle Dreiecke gehen
+    //  Dreieck hat drei Knoten
+    //  An den Knoten jeweils den Winkel innerhalb des Dreiecks ausrechnen
+    //  Normale der Knoten aktualisieren (aufsummieren nach Formel)
+    for (Triangle& t : triangles_)
+    {
+        const vec3& p0 = vertices_[t.i0].position;
+        const vec3& p1 = vertices_[t.i1].position;
+        const vec3& p2 = vertices_[t.i2].position;
+
+        const vec3 a = normalize(p0 - p2);
+        const vec3 b = normalize(p1 - p0);
+        const vec3 c = normalize(p2 - p1);
+
+        const double angle_p0 = acos(dot(b, c));
+        const double angle_p1 = acos(dot(c, a));
+        const double angle_p2 = acos(dot(a, b));
+
+        vertices_[t.i0].normal += normalize(angle_p0 * t.normal);
+        vertices_[t.i1].normal += normalize(angle_p1 * t.normal);
+        vertices_[t.i2].normal += normalize(angle_p2 * t.normal);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -441,6 +464,36 @@ bool Mesh::intersect_triangle(const Triangle& triangle, const Ray& ray,
     const vec3& p1 = vertices_[triangle.i1].position;
     const vec3& p2 = vertices_[triangle.i2].position;
 
+    const vec3 b = ray.origin_ - p2;
+    const vec3 v1 = p0 - p2;
+    const vec3 v2 = p1 - p2;
+    const vec3 v3 = -ray.direction_;
+
+    const double detA = dot(v1, cross(v2, v3));
+
+    const double detA1 = dot(v1, cross(v2, b));
+    const double detA2 = dot(v1, cross(b, v3));
+    const double detA3 = dot(b, cross(v2, v3));
+
+    const double alpha = detA3 / detA;
+    const double beta = detA2 / detA;
+    const double t = detA1 / detA;
+    const double gamma = 1 - alpha - beta;
+
+    if (alpha <= 0 || beta <= 0 || gamma <= 0 || t < 1e-5) {
+        return false;
+    }
+
+    intersection_point = ray.origin_ + t * ray.direction_;
+    intersection_distance = norm(intersection_point - ray.origin_);
+
+    if (draw_mode_ == Draw_mode::FLAT) {
+        intersection_normal = triangle.normal;
+    }
+    else {
+        intersection_normal = normalize(alpha * vertices_[triangle.i0].normal + beta * vertices_[triangle.i1].normal + gamma * vertices_[triangle.i2].normal);
+    }
+
 
         /** \todo
     * (optional) Support textured triangles:
@@ -453,7 +506,23 @@ bool Mesh::intersect_triangle(const Triangle& triangle, const Ray& ray,
     * Use `material.shadowable` in the `lighting(...)` function to prevent it from being shadowed.
     * (`material.shadowable` is already set to false for the sky mesh and true for all other meshes, so you don't have to set it by yourself)
      */
+    if (hasTexture_) {
+        const double u0 = u_coordinates_[triangle.iuv0];
+        const double u1 = u_coordinates_[triangle.iuv1];
+        const double u2 = u_coordinates_[triangle.iuv2];
 
+        const double v0_ = v_coordinates_[triangle.iuv0];
+        const double v1_ = v_coordinates_[triangle.iuv1];
+        const double v2_ = v_coordinates_[triangle.iuv2];
+
+        const double u = alpha * u0 + beta * u1 + gamma * u2;
+        const double v = alpha * v0_ + beta * v1_ + gamma * v2_;
+
+        const int width = u * (texture_.width() - 1);
+        const int height = u * (texture_.height() - 1);
+
+        intersection_diffuse = texture_(width, height);
+    }
 
     return true;
 }

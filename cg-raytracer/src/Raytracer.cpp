@@ -287,7 +287,7 @@ vec3 Raytracer::lighting(const vec3& point, const vec3& normal,
             double distance;
             if (intersect_scene(light_ray, material_temp, point_temp, normal_temp, distance))
             {
-                if (norm(xl) > distance) {
+                if (norm(xl) > distance && distance > 0 && material.shadowable) {
                     shadow = true;
                 }
             }
@@ -309,8 +309,14 @@ vec3 Raytracer::lighting(const vec3& point, const vec3& normal,
             const vec3 r = normalize(mirror(xl, normal));
             if (!shadow)
             {
-                color[i] += light_source.color[i] * material.diffuse[i] * dot(normalize(xl), normal);
-                color[i] += light_source.color[i] * material.specular[i] * pow(dot(v, r), material.shininess);
+                double temp = dot(normalize(xl), normal);
+                double temp2 = dot(v, r);
+                if (temp > 0) {
+                    color[i] += light_source.color[i] * material.diffuse[i] * temp;
+                }
+                if (temp2 > 0) {
+                    color[i] += light_source.color[i] * material.specular[i] * pow(temp2, material.shininess);
+                }              
             }
         }
     }
