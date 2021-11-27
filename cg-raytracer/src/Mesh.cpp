@@ -16,6 +16,7 @@
 #include <cstring>
 #include <sstream>
 #include <map>
+#include "Plane.h"
 
 //== IMPLEMENTATION ===========================================================
 
@@ -394,17 +395,18 @@ bool Mesh::intersect_bounding_box(const Ray& ray) const
     * with all triangles of every mesh in the scene. The bounding boxes are computed
     * in `Mesh::compute_bounding_box()`.
     */
-    double tmin = (bb_min_[0] - ray.origin_[0]) / ray.direction_[0];
-    double tmax = (bb_max_[0] - ray.origin_[0]) / ray.direction_[0];
-
-    if (tmin > tmax) {
-        const double temp = tmin;
-        tmin = tmax;
-        tmax = temp;
-    }
-
+    double txmin = (bb_min_[0] - ray.origin_[0]) / ray.direction_[0];
+    double txmax = (bb_max_[0] - ray.origin_[0]) / ray.direction_[0];
     double tymin = (bb_min_[1] - ray.origin_[1]) / ray.direction_[1];
     double tymax = (bb_max_[1] - ray.origin_[1]) / ray.direction_[1];
+    double tzmin = (bb_min_[2] - ray.origin_[2]) / ray.direction_[2];
+    double tzmax = (bb_max_[2] - ray.origin_[2]) / ray.direction_[2];
+
+    if (txmin > txmax) {
+        const double temp = txmin;
+        txmin = txmax;
+        txmax = temp;
+    }
 
     if (tymin > tymax)
     {
@@ -413,19 +415,6 @@ bool Mesh::intersect_bounding_box(const Ray& ray) const
         tymax = temp;
     }
 
-    if((tmin > tymax) || (tymin > tmax)) {
-        return false;
-    }
-
-    if (tymin > tmin) 
-        tmin = tymin;
-
-    if (tymax < tmax)
-        tmax = tymax;
-
-    double tzmin = (bb_min_[2] - ray.origin_[2]) / ray.direction_[2];
-    double tzmax = (bb_max_[2] - ray.origin_[2]) / ray.direction_[2];
-
     if (tzmin > tzmax)
     {
         const double temp = tzmin;
@@ -433,8 +422,7 @@ bool Mesh::intersect_bounding_box(const Ray& ray) const
         tzmax = temp;
     }
 
-    if ((tmin > tzmax) || (tzmin > tmax))
-    {
+    if (txmin > tymax || tymin > txmax || txmin > tzmax || tzmin > txmax || tymin > tzmax || tzmin > tymax) {
         return false;
     }
 
