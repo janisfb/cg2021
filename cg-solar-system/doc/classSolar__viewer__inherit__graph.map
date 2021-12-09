@@ -1,0 +1,4 @@
+<map id="Solar_viewer" name="Solar_viewer">
+<area shape="rect" id="node1" title="OpenGL viewer that handles all the rendering for us." alt="" coords="5,80,104,107"/>
+<area shape="rect" id="node2" title=" " alt="" coords="20,5,89,32"/>
+</map>

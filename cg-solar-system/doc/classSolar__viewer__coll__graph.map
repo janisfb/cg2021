@@ -1,0 +1,9 @@
+<map id="Solar_viewer" name="Solar_viewer">
+<area shape="rect" id="node1" title="OpenGL viewer that handles all the rendering for us." alt="" coords="111,440,209,467"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,305,75,332"/>
+<area shape="rect" id="node3" href="$classSpace__Object.html" title="default class for the planet" alt="" coords="193,171,298,197"/>
+<area shape="rect" id="node6" href="$classEarth.html" title="earth is a special planet, because we need access to more textures" alt="" coords="203,305,256,332"/>
+<area shape="rect" id="node7" href="$classMoon.html" title="Moon is a special planet, because it does not evolve around the sun." alt="" coords="280,305,336,332"/>
+<area shape="rect" id="node4" href="$classBillboard.html" title=" " alt="" coords="209,81,282,108"/>
+<area shape="rect" id="node5" title=" " alt="" coords="218,5,273,32"/>
+</map>

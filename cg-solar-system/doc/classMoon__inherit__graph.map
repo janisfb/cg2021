@@ -1,0 +1,4 @@
+<map id="Moon" name="Moon">
+<area shape="rect" id="node1" title="Moon is a special planet, because it does not evolve around the sun." alt="" coords="30,80,86,107"/>
+<area shape="rect" id="node2" href="$classSpace__Object.html" title="default class for the planet" alt="" coords="5,5,111,32"/>
+</map>

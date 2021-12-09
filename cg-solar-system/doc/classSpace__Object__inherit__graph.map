@@ -1,0 +1,5 @@
+<map id="Space_Object" name="Space_Object">
+<area shape="rect" id="node1" title="default class for the planet" alt="" coords="18,5,123,32"/>
+<area shape="rect" id="node2" href="$classEarth.html" title="earth is a special planet, because we need access to more textures" alt="" coords="5,80,59,107"/>
+<area shape="rect" id="node3" href="$classMoon.html" title="Moon is a special planet, because it does not evolve around the sun." alt="" coords="83,80,139,107"/>
+</map>
