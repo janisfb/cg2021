@@ -17,18 +17,18 @@ using namespace std;
 //=============================================================================
 
 // start version scales
-#define D_RADIUS_SCALE_SMALL 15.0f
-#define D_RADIUS_SCALE_BIG 6.0f
-#define D_DISTANCE_SCALE_SMALL 0.03f
-#define D_DISTANCE_SCALE_BIG 0.015f
-#define D_DISTANCE_SCALE_MOON 1.5f
+//#define D_RADIUS_SCALE_SMALL 15.0f
+//#define D_RADIUS_SCALE_BIG 6.0f
+//#define D_DISTANCE_SCALE_SMALL 0.03f
+//#define D_DISTANCE_SCALE_BIG 0.015f
+//#define D_DISTANCE_SCALE_MOON 1.5f
 
 // better version <-- use this as soon as you finished the first 2 tasks
-//#define D_RADIUS_SCALE_SMALL 12.0f
-//#define D_RADIUS_SCALE_BIG 7.0f
-//#define D_DISTANCE_SCALE_SMALL 0.07f
-//#define D_DISTANCE_SCALE_BIG 0.07f
-//#define D_DISTANCE_SCALE_MOON 1.5f
+#define D_RADIUS_SCALE_SMALL 12.0f
+#define D_RADIUS_SCALE_BIG 7.0f
+#define D_DISTANCE_SCALE_SMALL 0.07f
+#define D_DISTANCE_SCALE_BIG 0.07f
+#define D_DISTANCE_SCALE_MOON 1.5f
 
 // realistic version <-- use this just if you are interested in realistic scales
 // or if you want to get a 'lost in space' feeling (use the spaceship and try to reach some of the other planets)
@@ -590,31 +590,73 @@ void Solar_viewer::draw_scene(mat4& projection, mat4& view)
 // render sun with simple shader
     m_matrix = sun_.model_matrix_;
     mv_matrix = view * m_matrix;
+    n_matrix = transpose(inverse(mat3(mv_matrix)));
     mvp_matrix = projection * mv_matrix;
-    phong_shader_.use();
-    phong_shader_.set_uniform("modelview_projection_matrix", mvp_matrix);
-    phong_shader_.set_uniform("tex", 0);
-    phong_shader_.set_uniform("greyscale", (int)greyscale_);
-    phong_shader_.set_uniform("modelview_matrix", mv_matrix);
-    phong_shader_.set_uniform("normal_matrix", n_matrix);
-    phong_shader_.set_uniform("light_position", light);
+
+    color_shader_.use();
+    color_shader_.set_uniform("modelview_projection_matrix", mvp_matrix);
+    color_shader_.set_uniform("tex", 0);
+    color_shader_.set_uniform("greyscale", (int)greyscale_);
     sun_.texture_.bind();
     unit_sphere_mesh_.draw();
 
+    m_matrix = stars_.model_matrix_;
+    mv_matrix = view * m_matrix;
+    mvp_matrix = projection * mv_matrix;
+    color_shader_.set_uniform("modelview_projection_matrix", mvp_matrix);
+    stars_.texture_.bind();
+    unit_sphere_mesh_.draw();
 
+    
+
+    phong_shader_.use();
+    phong_shader_.set_uniform("light_position", light);
+    phong_shader_.set_uniform("tex", 0);
+    phong_shader_.set_uniform("greyscale", (int)greyscale_);
     for (Space_Object* planet : planets_)
     {
         m_matrix = planet->model_matrix_;
         mv_matrix = view * m_matrix;
+        n_matrix = transpose(inverse(mat3(mv_matrix)));
         mvp_matrix = projection * mv_matrix;
 
-        phong_shader_.set_uniform("modelview_projection_matrix", mvp_matrix);
-        phong_shader_.set_uniform("modelview_matrix", mv_matrix);
-        planet->texture_.bind();
-        unit_sphere_mesh_.draw();
+        if (planet == &earth_) {
+            earth_shader_.use();
+            earth_shader_.set_uniform("light_position", light);
+
+            earth_shader_.set_uniform("day_texture", 0);
+            earth_shader_.set_uniform("night_texture", 1);
+            earth_shader_.set_uniform("cloud_texture", 2);
+            earth_shader_.set_uniform("gloss_texture", 3);
+            planet->texture_.bind();
+
+            earth_shader_.set_uniform("greyscale", (int)greyscale_);
+            earth_shader_.set_uniform("modelview_projection_matrix", mvp_matrix);
+            earth_shader_.set_uniform("modelview_matrix", mv_matrix);
+            earth_shader_.set_uniform("normal_matrix", n_matrix);
+            unit_sphere_mesh_.draw();           
+        } else {
+            phong_shader_.use();
+            phong_shader_.set_uniform("modelview_projection_matrix", mvp_matrix);
+            phong_shader_.set_uniform("modelview_matrix", mv_matrix);
+            phong_shader_.set_uniform("normal_matrix", n_matrix);
+            planet->texture_.bind();
+            unit_sphere_mesh_.draw();
+        }      
     }
 
+    glEnable(GL_BLEND);
+    m_matrix = mat4::scale(sun_.glow_->size_) * mat4::rotate_y(sun_.glow_->angle_y_) * mat4::rotate_x(sun_.glow_->angle_x_);
+    mv_matrix = view * m_matrix;
+    n_matrix = transpose(inverse(mat3(mv_matrix)));
+    mvp_matrix = projection * mv_matrix;
 
+    color_shader_.use();
+    color_shader_.set_uniform("modelview_projection_matrix", mvp_matrix);
+    color_shader_.set_uniform("tex", 0);
+    color_shader_.set_uniform("greyscale", (int)greyscale_);
+    sun_.glow_->draw();
+    glDisable(GL_BLEND);
     // check for OpenGL errors
     glCheckError();
 }

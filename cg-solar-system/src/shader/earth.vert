@@ -23,5 +23,10 @@ void main()
      *   and continue with the fragment shader
      */
 
+    v2f_normal = normalize(normal_matrix*v_normal);
+    v2f_texcoord = v_texcoord;
+    v2f_light = normalize((light_position-(modelview_matrix*v_position)).xyz);
+    v2f_view = normalize((vec4(0,0,0,1)-(modelview_matrix*v_position)).xyz);
 
+    gl_Position = modelview_projection_matrix*v_position;
 } 

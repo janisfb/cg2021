@@ -35,6 +35,55 @@ void main()
     *   - Lookup the documentation of the function called `smoothstep(...)` it might be helpful.
     *   - There is not the one right way to get the desired results. Feel free to use some magic numbers or creative solutions.
      */
+    vec3 tex_color_day = texture(day_texture, v2f_texcoord.st).rgb;
+    vec3 tex_color_night = texture(night_texture, v2f_texcoord.st).rgb;
+    vec3 tex_color_cloud = texture(cloud_texture, v2f_texcoord.st).rgb;
+    vec3 tex_color_gloss = texture(gloss_texture, v2f_texcoord.st).rgb;
+
+    float alpha_day = texture(day_texture, v2f_texcoord.st).a;
+    float alpha_night = texture(night_texture, v2f_texcoord.st).a;
+    float alpha_cloud = texture(cloud_texture, v2f_texcoord.st).a;
+    float alpha_gloss = texture(gloss_texture, v2f_texcoord.st).a;
+
+
+    float temp = dot(v2f_light,v2f_normal);
+
+    //ambient
+    float temp1_2 = smoothstep(-0.5, 0.5, temp);
+    tex_color_night *= 1-tex_color_cloud.r;
+    vec3 color = mix(1.4*tex_color_night, .2*tex_color_day, temp1_2);
+
+    if(temp > 0) {
+        //diffuse
+        color += sunlight*max(tex_color_day, tex_color_gloss.r*tex_color_cloud)*temp;
+
+        //specular
+        float temp2 = dot(v2f_view,normalize(reflect(-v2f_light,v2f_normal)));
+        if(temp2 > 0) {
+            color += tex_color_gloss.r*sunlight*tex_color_day*pow(temp2,shininess);
+        }
+    } 
+
+//    vec3 color = .2*tex_color_day;
+//    if(temp > 0) {
+//        color += sunlight*max(tex_color_day, tex_color_cloud)*temp;
+//        float temp2 = dot(v2f_view,normalize(reflect(-v2f_light,v2f_normal)));
+//        if(temp2 > 0) {
+//            color += .2*sunlight*tex_color_day*pow(temp2,shininess);
+//        }
+//    }
+//    if(temp <= 0) {
+//        color += sunlight*tex_color_night*-temp;
+//        float temp2 = dot(v2f_view,normalize(reflect(-v2f_light,v2f_normal)));
+//        if(temp2 <= 0) {
+//            color += .2*sunlight*tex_color_night*pow(-temp2,shininess);
+//        }
+//    }
     
+    // convert RGB color to YUV color and use only the luminance
+    if (greyscale) color = vec3(0.299*color.r+0.587*color.g+0.114*color.b);
+
+    // add required alpha value
+    f_color = vec4(color, alpha_day);
 
 }
