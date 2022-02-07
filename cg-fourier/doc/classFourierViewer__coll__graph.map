@@ -1,0 +1,11 @@
+<map id="FourierViewer" name="FourierViewer">
+<area shape="rect" id="node1" title="Exercise viewer." alt="" coords="175,348,278,375"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,185,75,212"/>
+<area shape="rect" id="node3" href="$classFourier1D.html" title="class that performs 1D fourier transform and different filters" alt="" coords="99,185,178,212"/>
+<area shape="rect" id="node4" href="$classFourier2D.html" title=" " alt="" coords="346,185,425,212"/>
+<area shape="rect" id="node5" href="$classSignal2D.html" title="derived class holding double values (2D images)" alt="" coords="193,81,268,108"/>
+<area shape="rect" id="node6" href="$classData2D.html" title=" " alt="" coords="166,5,295,32"/>
+<area shape="rect" id="node7" href="$classSpectrum2D.html" title="derived class holding complex values (2D spectrums)" alt="" coords="346,81,441,108"/>
+<area shape="rect" id="node8" href="$classData2D.html" title=" " alt="" coords="323,5,463,32"/>
+<area shape="rect" id="node9" href="$structFourierViewer_1_1ImageTexture.html" title="structure holding the relevant variables of an OpenGL texture" alt="" coords="449,185,639,212"/>
+</map>
