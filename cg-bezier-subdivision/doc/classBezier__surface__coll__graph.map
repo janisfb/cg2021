@@ -1,0 +1,4 @@
+<map id="Bezier_surface" name="Bezier_surface">
+<area shape="rect" id="node1" title="A surface represented by a collection of Bezier patches." alt="" coords="5,95,115,121"/>
+<area shape="rect" id="node2" href="$classBezier__patch.html" title="Bi&#45;cubic Bezier patch." alt="" coords="11,5,109,32"/>
+</map>
