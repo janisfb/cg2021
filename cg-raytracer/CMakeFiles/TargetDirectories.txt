@@ -1,0 +1,8 @@
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/CMakeFiles/rebuild_cache.dir
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/CMakeFiles/edit_cache.dir
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/external/stb_image/CMakeFiles/edit_cache.dir
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/external/stb_image/CMakeFiles/rebuild_cache.dir
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/external/stb_image/CMakeFiles/stb_image.dir
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/src/CMakeFiles/rebuild_cache.dir
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/src/CMakeFiles/edit_cache.dir
+/mnt/d/cg_uebungen/cg2021/cg-raytracer/src/CMakeFiles/raytracer.dir

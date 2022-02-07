@@ -1,0 +1,1 @@
+/usr/bin/c++   -fopenmp -DNDEBUG -O3 -O3 -DNDEBUG    -rdynamic CMakeFiles/raytracer.dir/Mesh.cpp.o CMakeFiles/raytracer.dir/Plane.cpp.o CMakeFiles/raytracer.dir/Raytracer.cpp.o CMakeFiles/raytracer.dir/Sphere.cpp.o CMakeFiles/raytracer.dir/main.cpp.o CMakeFiles/raytracer.dir/utils/Image.cpp.o CMakeFiles/raytracer.dir/utils/vec3.cpp.o  -o ../raytracer  ../libstb_image.a 
